@@ -50,3 +50,90 @@
 
 # WebRtc通信过程
 
+## 第一步: 音视频采集
+* 采集音视频数据是 WebRTC通信的前提,我们可以使用浏览器提供的getUserMedia API进行音视频采集。
+
+```
+const constraints = { video: true, audio: true }
+const localStream = navigator.mediaDevices.getUserMedia(constraints)
+
+```
+* getUserMedia接受参数constraints用于指定 MediaStream中包含哪些类型的媒体轨(音频轨 视频轨)，并对媒体轨做设置(如设置视频的宽高 帧率等)
+* 返回一个 promise对象，成功后会获取流媒体对象MediaStream(包含从音视频设备中获取的音视频数据)
+* 使用 getUserMedia时,浏览器会询问用户,开启音频和视频权限。 如果用户拒绝或无权限时,则返回error
+
+## 其他相关API
+* MediaDeviceInfo
+* navigator.mediaDevices.enumerateDevices()
+* navigator.mediaDevices.getDisplayMedia()
+
+* webrtc相关的API需要 HTTPS 或者 localhost 环境支持,因为在浏览器上通过http请求下来的js脚本不允许访问音视频设备的,只有通过https请求的脚本才能访问音视频设备。
+
+## 信令交互
+### 什么是信令服务器
+* 信令可以简单理解为消息,在协调通讯的过程中,为了建立一个webRTC的通讯过程,在通信双方彼此连接 传输媒体数据之前,它们要通过信令服务器交换一些信息, 如加入房间 离开房间及媒体协商等,而这个过程在webRTC里面是没有实现的,需要自己搭建信令服务。
+### 使用Node搭建信令服务器
+* Socket.io
+* Socket.io 已经内置了房间的概念,所以非常适合用于信令服务器的创建
+## RTCPeerConnection 对象 媒体协商
+
+* RTCPeerConnection是一个由本地计算机到远端的WebRTC连接,该接口提供 创建 保持 监控 关闭连接的方法实现,可以简单理解为功能强大的socket连接。
+* 通过 new RTCPeerConnection 即可创建一个 RTCPeerConnection对象,此对象主要负责与各端建立连接（NAT 穿越） 接受 发送音视频数据,并保障音视频的服务质量
+* 端到端的媒体协商也是基于 RTCPeerConnection对象来实现的。
+
+### 什么是媒体协商
+* 媒体协商的作用是找到双方共同支持的媒体能力, 如双方各自支持的编解码器 音频的参数采样率 采样大小 声道数 视频的参数分辨率 帧率等。
+* 音频/视频的信息都会在 SDP(Session Description Protocal:即使使用文本描述各端的 能力) 中进行描述。
+### 媒体协商过程
+* 一对一通信中 发起方发送的SDP称为Offer(提议) 接受方的发送的SDP称为 Answer(应答)
+* 每端保持两个描述 描述本身的本地描述 LocalDescription 描述呼叫的远端的远端描述 RemoteDescription
+![媒体协商](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f737fac26bad4d788d653ffc52c3fda2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+### 代码实现媒体协商过程
+* createOffer
+* createAnswer
+* setLocalDescription
+* setRemoteDescription
+## 端与端建立连接
+* 媒体协商结束后,双端统一了传输协议,编解码器等,此时就需要建立连接开始音视频通信了。
+* WebRTC既要保持音视频通信的质量 又要保证联通性。
+* 当同时存在多个有效连接时,它首先选择传输质量最好的线路,如能内网连通就不用公网, 优先 P2P  如果P2P不通才会选择中继服务器 relay 因为中继方式会增加双端传输的时长。
+### 什么是Candidate
+* 媒体协商结束后,开始收集 Candidate 
+* ICE Candidate (ICE候选者) 表示WebRTC 与 远端通信时使用的协议 IP地址和端口。
+
+```
+{
+  address: xxx.xxx.xxx.xxx, // 本地IP地址
+  port: number, // 本地端口号
+  type: 'host/srflx/relay', // 候选者类型
+  priority: number, // 优先级
+  protocol: 'udp/tcp', // 传输协议
+  usernameFragment: string // 访问服务的用户名
+  ...
+}
+
+
+```
+* WebRTC在进行连接测试后时,通信双端会提供众多候选者,然后按照优先级进行连通性测试,测试成功就会建立连接。
+
+* 候选者 Candidate 类型 即 type 分为三种类型
+    - host 本机候选者  优先级最高 host 类型之间的连通性测试 就是 内网之间的连通性测试  P2P
+    - srfix  内网主机映射的外网地址和端口    如果host 无法建立连接 则选择srfix连接 即 P2P
+    - relay 中继候选者  优先级最低 只有上述两种不存在时 才会走中继服务器的模式 因为会增加传输时间 优先级最低。
+### 如何收集 Candidate
+* host 类型  就是 本机的ip地址 和端口
+* srfix 类型 就是 内网通过 NAT(Net Address Translation，作用是进行内外网的地址转换 位于内网的网关上) 映射后的外网地址。
+
+![NAT](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c9ba6a245796424a82356f6605f11b46~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp?)
+#### STUN 协议
+* 全称  Session Traversal Utilities for NAT  是一种网络协议,它允许位于 NAT后的客户端找出自己的公网地址,也就是遵守这个协议就可以拿到自己的公网IP
+
+#### TURN 协议
+* 全称 Traversal Using Relays around NAT (使用中继穿透NAT) STUN的中继扩展。 简单的说 TURN 与 STUN的共同点都是 通过修改应用层中私网地址达到 NAT穿透的效果,异同点是TURN是 通过两方通讯的 中间人 方式实现穿透。
+
+* relay 类型 的 Candidate 获取是通过 TURN协议完成,它的连通率是所有候选者中连通率最高的,优先级也是最低的。
+
+#### NAT 打洞/P2P穿越
+### ICE
+
+## 显示远端流
