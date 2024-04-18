@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频测试</title>
+</head>
+<body>
+   <audio id="audio" controls autoplay></audio> 
+   <script>
+     const audioDOM = document.querySelector('#audio')
+     const onSuccess = (stream)=>{
+        const audioTracks = stream.getAudioTracks()
+        console.log('音频设备:', audioTracks[0].label);
+        audioDOM.srcObject = stream
+     }
+     const onError = (error)=>{
+        console.log(error)
+     }
+     const constraints = {
+        audio:true,
+        video:false
+     }
+
+     navigator.mediaDevices.getUserMedia(constraints).then(onSuccess).catch(onError)
+   </script>
+</body>
+</html>
