@@ -8,55 +8,6 @@ importers:
 
   .: {}
 
-  packages/React/react-js-vite:
-    dependencies:
-      '@craftjs/core':
-        specifier: ^0.2.0-beta.12
-        version: 0.2.5(react@18.2.0)
-      '@material-ui/core':
-        specifier: 4.5.2
-        version: 4.5.2(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      material-ui-color-picker:
-        specifier: 3.2.0
-        version: 3.2.0(@material-ui/core@4.5.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-contenteditable:
-        specifier: 3.3.3
-        version: 3.3.3(react@18.2.0)
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.2.66
-        version: 18.2.79
-      '@types/react-dom':
-        specifier: ^18.2.22
-        version: 18.2.25
-      '@vitejs/plugin-react':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@5.2.10(@types/node@20.12.7)(less@4.1.3)(lightningcss@1.22.1)(terser@5.30.4))
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      eslint-plugin-react:
-        specifier: ^7.34.1
-        version: 7.34.1(eslint@8.57.0)
-      eslint-plugin-react-hooks:
-        specifier: ^4.6.0
-        version: 4.6.0(eslint@8.57.0)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.6
-        version: 0.4.6(eslint@8.57.0)
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
-      vite:
-        specifier: ^5.2.0
-        version: 5.2.10(@types/node@20.12.7)(less@4.1.3)(lightningcss@1.22.1)(terser@5.30.4)
-
   packages/React/react-vite:
     dependencies:
       react:
@@ -93,6 +44,34 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.4.5
+      vite:
+        specifier: ^5.2.0
+        version: 5.2.10(@types/node@20.12.7)(less@4.1.3)(lightningcss@1.22.1)(terser@5.30.4)
+
+  packages/React/reactjs-vite:
+    dependencies:
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@vitejs/plugin-react':
+        specifier: ^4.2.1
+        version: 4.2.1(vite@5.2.10(@types/node@20.12.7)(less@4.1.3)(lightningcss@1.22.1)(terser@5.30.4))
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      eslint-plugin-react:
+        specifier: ^7.34.1
+        version: 7.34.1(eslint@8.57.0)
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.0
+        version: 4.6.0(eslint@8.57.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.6
+        version: 0.4.6(eslint@8.57.0)
       vite:
         specifier: ^5.2.0
         version: 5.2.10(@types/node@20.12.7)(less@4.1.3)(lightningcss@1.22.1)(terser@5.30.4)
@@ -147,7 +126,7 @@ importers:
         version: 0.2.5(react@18.2.0)
       '@material-ui/core':
         specifier: 4.5.2
-        version: 4.5.2(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.5.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       clsx:
         specifier: latest
         version: 2.1.1
@@ -9825,11 +9804,11 @@ snapshots:
       react: 18.1.0
       react-is: 16.13.1
 
-  '@material-ui/core@4.5.2(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@material-ui/core@4.5.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.24.4
-      '@material-ui/styles': 4.11.5(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@material-ui/system': 4.12.2(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@material-ui/styles': 4.11.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@material-ui/system': 4.12.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@material-ui/types': 4.1.1
       '@material-ui/utils': 4.11.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@types/react-transition-group': 4.4.10
@@ -9845,11 +9824,11 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@material-ui/styles@4.11.5(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@material-ui/styles@4.11.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.24.4
       '@emotion/hash': 0.8.0
-      '@material-ui/types': 5.1.0(@types/react@18.2.79)
+      '@material-ui/types': 5.1.0
       '@material-ui/utils': 4.11.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       clsx: 1.2.1
       csstype: 2.6.21
@@ -9865,10 +9844,8 @@ snapshots:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-    optionalDependencies:
-      '@types/react': 18.2.79
 
-  '@material-ui/system@4.12.2(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@material-ui/system@4.12.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@babel/runtime': 7.24.4
       '@material-ui/utils': 4.11.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -9876,16 +9853,12 @@ snapshots:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-    optionalDependencies:
-      '@types/react': 18.2.79
 
   '@material-ui/types@4.1.1':
     dependencies:
       '@types/react': 18.2.79
 
-  '@material-ui/types@5.1.0(@types/react@18.2.79)':
-    optionalDependencies:
-      '@types/react': 18.2.79
+  '@material-ui/types@5.1.0': {}
 
   '@material-ui/utils@4.11.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -15264,7 +15237,7 @@ snapshots:
 
   material-ui-color-picker@3.2.0(@material-ui/core@4.5.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@material-ui/core': 4.5.2(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@material-ui/core': 4.5.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       prop-types: 15.8.1
       react: 18.2.0
       react-color: 2.19.3(react@18.2.0)
