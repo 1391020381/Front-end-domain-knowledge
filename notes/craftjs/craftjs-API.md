@@ -12,3 +12,15 @@
 * Frame defines the editable area in your page editor. It is rendered based on the editor`s internal state (i.e Nodes)
 
 * const { connectors,setProp,...collected } = useNode(collector)
+
+
+# Layers
+* A Photoshop-like layers panel for your page editor
+
+
+
+
+
+* selectors hover 提示
+* canvas 编辑提示
+* settingPanel 表单封装

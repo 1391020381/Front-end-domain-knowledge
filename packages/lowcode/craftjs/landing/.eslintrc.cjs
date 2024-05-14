@@ -19,4 +19,7 @@ module.exports = {
     ],
     "react/prop-types": "off"
   },
+  global:{
+    __dirname:'readonly'
+  }
 }
