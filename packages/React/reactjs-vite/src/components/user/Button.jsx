@@ -1,5 +1,5 @@
 import { useNode } from "@craftjs/core";
-import { Button as AntdButton, Form, Select } from "antd";
+import { Button as AntdButton, Form, Select, Input } from "antd";
 
 export const Button = ({ size, type, text, onClick, ...props }) => {
   const {
@@ -26,16 +26,23 @@ export const ButtonSettings = () => {
   } = useNode((node) => ({
     props: node.data.props,
   }));
-  const handleChange = (value) => {
-    console.log("handleChange:", value);
-    setProp((props) => {
-      props.size = value;
-    });
-    // setProp((props) => (props.variant = e.target.value))
-  };
+  const handleFormValuesChange = (changedValues, allVlaues) => {
+    console.log("handleFormValuesChange:", changedValues, allVlaues)
+    Object.keys(changedValues).forEach(key => {
+      setProp((props) => {
+        props[key] = changedValues[key]
+      })
+    })
+  }
 
   return (
     <Form
+      onValuesChange={handleFormValuesChange}
+      name="basic"
+      initialValues={{
+        text: "click me",
+        size: "default"
+      }}
       labelCol={{
         span: 8,
       }}
@@ -45,23 +52,33 @@ export const ButtonSettings = () => {
       style={{
         maxWidth: 600,
       }}
-      initialValues={{
-        remember: true,
-      }}
+
       autoComplete="off"
     >
       <Form.Item
+        label="按钮文案"
+        name="text"
+        rules={[
+          // {
+          //   required: true,
+          //   message: "Please input your button text!",
+          // },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="按钮大小"
+        name="size"
         wrapperCol={{
           offset: 8,
           span: 16,
         }}
       >
         <Select
-          defaultValue="default"
           style={{
             width: 120,
           }}
-          onChange={handleChange}
           options={[
             {
               value: "small",
@@ -87,11 +104,6 @@ export const ButtonDefaultProps = {
   type: "primary",
   text: "Click me",
 };
-// const ButtonSettings2 = () =>{
-//     return (
-//         <div>ButtonSettings</div>
-//     )
-// }
 Button.craft = {
   props: ButtonDefaultProps,
   related: {
