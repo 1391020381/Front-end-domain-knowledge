@@ -40,3 +40,37 @@
 
 # 组件库
 
+
+
+* 组件库新增包需要重新打包，然后在 left  canvas 中 引入 才可以拖拽 编辑
+
+
+
+
+# 动态逻辑
+* 动态逻辑和状态  
+* function  Dialog
+1. vm 
+    - iframe 创建 iframe  connectJsRuntimeVM
+    - execute 引入 connectJsRuntimeVM 注入gloabalScope  并通过 sandbox.eval 执行 code
+    - mountJsModule builder
+    - installNpm
+2. builder
+    - sucrase
+3. 代码执行   
+    - Function
+    - window.eval
+
+4. 解析可执行代码  
+    - template 模版渲染
+5. 页面中使用 
+    - right setting {{props.size}}
+    - 在 widthMaterialNode 中比较粗暴的方式是 当 props 发生变化的时候,通过 cloneDeepWith方法深度遍历每个属性
+    - 通过 isExpression判断 value 
+    - 如果是表达式的情况下,将其调用 parseJsStrToLte的结果
+    - browserRuntimeVM.excute执行  此时 将原始的 props传递给 browserRuntimeVM创建当前的上下文
+    - React.useMemo  用于优化性能 其作用是记忆计算结果 当依赖不变时,避免在每次组件渲染时重新计算一些开销较大的操作。
+    - const memoizedValue = React.useMemo(() => computeExpensiveValue(a, b), [a, b]);
+    - computeExpensiveValue 函数
+    - a b 依赖项
+    - memoizedProps 
