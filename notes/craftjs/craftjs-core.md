@@ -73,4 +73,53 @@
     - const memoizedValue = React.useMemo(() => computeExpensiveValue(a, b), [a, b]);
     - computeExpensiveValue 函数
     - a b 依赖项
-    - memoizedProps 
+    - memoizedProps
+
+
+ * 右侧事件Event  
+ * Form.List 动态添加表单
+ * handleFormChange   
+    - actions.setProp(nodeId,(setterProps)=>{
+        return merge(setterProps,{
+            __events__:events
+        })
+    })
+* 在 useParseBinding中 会观察 props store的变化然后处理 属性 props(状态和事件)
+
+
+* 属性 样式 事件
+
+* 全局state管理   useCreateStore   
+* FrameworkContextProvider
+* import ReactFrameComponent, {
+  FrameContextConsumer,
+} from "react-frame-component";
+* editor  left  queries
+
+* packages/setter/src/fields
+* binding-state-setter.tsx BindingStateSetter  
+* 在 props中添加 $$store 并监听 然后绑定到全局状态中
+* 然后在 组件右侧编辑器中使用 store获取变量
+* 然后  createReactMaterial useParseBinding 处理
+
+
+```
+
+useThrottleEffect(() => {
+      if (props.$$store && Array.isArray(props.$$store)) {
+        const result: Record<string, any> = {}
+        props.$$store.forEach((item: any) => {
+          result[item.name] = item.defaultVal
+        })
+        console.log(result, 'result')
+
+      
+      store.dispatch(onUpdated({
+        [id]: result
+      }))
+      }
+    }, [props.$$store])
+
+
+
+```
