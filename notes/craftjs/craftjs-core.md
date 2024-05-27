@@ -130,4 +130,4 @@ useThrottleEffect(() => {
     -  使用craftjs 组件的模版中也要 使用
 
 # 国际化
-    
+* main /  当前应用的基本信息配置
