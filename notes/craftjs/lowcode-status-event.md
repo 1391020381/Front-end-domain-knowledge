@@ -21,3 +21,55 @@
     - babel-standalone
     - sucrase
     - wasm
+
+
+ * handleMountJsMoudle  通过 connectJsRuntimeVM链接到执行容器后
+ * 再执行 sucraseTransformCode方法转换cjs模块代码
+ * 最后通过 compileModuleResolve将 cjs模块执行输出成一个能直接使用的js对象 将其挂载到 sandbox.huosScope.jsModule指定目录下。
+
+ ```
+ React.useffect(()=>{
+    jsRuntime.mountJsMoudle(jsMoudleCode)
+ },[jsModuleCode])
+
+ ```  
+
+ # jsRuntime 
+    - class BrowserRuntimeVM
+    - constructor 通过 document.createElement("iframe") 创建一个iframe
+    - onEvalCode(code,globalScope)  传入 code globalScope 通过 上面创建的 iframe来执行code 并返回执行的值
+    - execute(code,globalScope)   对onEvalCode 封装一层 
+    - loadJS   
+ # builder
+    - sucraseTransformCode 编译代码
+    - compileModuleResolve 处理依赖
+    - sandbox.huosScope.depends   core/vm/scope
+ # vm  
+ * core/vm
+ * execute
+ 
+
+ * 物料组件(events) -> 事件管理器 -> 绑定模块函数 ->  withComponent  -> 逻辑执行
+ * createReactMaterial(ButtonView,{
+    displayName:"按钮",
+    custom:{
+      useResize:false,
+      eventOptions:[
+         {
+            label:"(onClick)点击事件",
+            value:"onClick"
+         },
+         {
+            label:"(onChange)修改事件",
+            value:"onChange",
+         }
+      ]
+    },
+    related:{
+      settingRender:Panel,
+    }
+ })
+ * 物料组件注册后,使用useEditor可以通过当前Id获取到组件自定义的事件列表
+ * data?.custom?.evnetOptions  即可在事件管理器中进行选择
+ * 
+ * useAsyncEffect   editor/right/props/component-code.tsx
