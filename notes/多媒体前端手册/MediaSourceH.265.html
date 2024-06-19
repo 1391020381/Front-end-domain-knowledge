@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaSource H.265 Example</title>
+</head>
+<body>
+    <video id="video" controls></video>
+
+    <script>
+        const video = document.getElementById('video');
+        const mediaSource = new MediaSource();
+        video.src = URL.createObjectURL(mediaSource);
+
+        mediaSource.addEventListener('sourceopen', () => {
+            const sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="hvc1"');
+            
+            // 模拟获取视频流数据
+            const fetchVideoData = async () => {
+                // 这里替换为你实际的视频流数据获取逻辑
+                const response = await fetch('path/to/your/h265/video.mp4');
+                const reader = response.body.getReader();
+                let buffer = new Uint8Array();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buffer = appendBuffer(buffer, value);
+
+                    // 分片大小控制
+                    if (buffer.length > 1024 * 1024) { // 1MB
+                        await appendToSourceBuffer(sourceBuffer, buffer);
+                        buffer = new Uint8Array();
+                    }
+                }
+
+                // 最后剩余的数据
+                if (buffer.length > 0) {
+                    await appendToSourceBuffer(sourceBuffer, buffer);
+                }
+
+                mediaSource.endOfStream();
+            };
+
+            fetchVideoData();
+
+            // 辅助函数：添加数据到 SourceBuffer
+            const appendToSourceBuffer = async (sourceBuffer, data) => {
+                return new Promise((resolve, reject) => {
+                    const onUpdateEnd = () => {
+                        sourceBuffer.removeEventListener('updateend', onUpdateEnd);
+                        resolve();
+                    };
+
+                    sourceBuffer.addEventListener('updateend', onUpdateEnd);
+                    try {
+                        sourceBuffer.appendBuffer(data);
+                    } catch (e) {
+                        if (e.name === 'QuotaExceededError') {
+                            // 处理缓冲区溢出错误
+                            const buffer = sourceBuffer.buffered;
+                            if (buffer.length > 0) {
+                                const start = buffer.start(0);
+                                const end = buffer.end(0);
+                                // 移除已经播放过的部分
+                                sourceBuffer.remove(start, end - 10); // 保留最后10秒的数据
+                            }
+                            sourceBuffer.appendBuffer(data);
+                        } else {
+                            reject(e);
+                        }
+                    }
+                });
+            };
+
+            // 辅助函数：合并两个 Uint8Array
+            const appendBuffer = (buffer1, buffer2) => {
+                const tmp = new Uint8Array(buffer1.length + buffer2.length);
+                tmp.set(buffer1, 0);
+                tmp.set(buffer2, buffer1.length);
+                return tmp;
+            };
+        });
+    </script>
+</body>
+</html>
