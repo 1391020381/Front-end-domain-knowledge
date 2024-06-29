@@ -1,3 +1,4 @@
 packages:
-  - 'packages/**/*/'
-  - 'notes/**/*/'
+  - "**"
+  - "!node_modules/**"
+  - "!**/nsode_modules/**"
