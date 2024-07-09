@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <title>RTCRtpSender</title>
+  </head>
+  <body>
+   <video id="localVideo" autoplay muted></video>
+   <script>
+      var pc = new RTCPeerConnection({
+        encodedInsertableStreams: true,
+      });
+      var localVideo = document.getElementById("localVideo");
+      var stream;
+
+      // 获取用户的音频和视频设备
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then((s) => {
+          stream = s;
+          localVideo.srcObject = stream;
+          start();
+        })
+        .catch((error) => {
+          console.error("Error accessing user media:", error);
+        });
+
+      async function start() {
+        let transceiver = await pc.addTransceiver(stream.getVideoTracks()[0], {
+          direction: "sendonly",
+          streams: [stream],
+        });
+        setupSenderTransform(transceiver.sender);
+      }
+
+      function setupSenderTransform(sender) {
+        console.log("sender kind=%s", sender.track.kind);
+        const senderStreams = sender.createEncodedStreams();
+        // const readableStream = senderStreams.readableStream;
+        // const writableStream = senderStreams.writableStream;
+        const readableStream = senderStreams.readable;
+        const writableStream = senderStreams.writable;
+        const transformStream = new TransformStream({
+          transform: encodeFunction,
+        });
+        readableStream.pipeThrough(transformStream).pipeTo(writableStream);
+      }
+
+      let frames = 0;
+
+      function encodeFunction(chunk, controller) {
+        const tmp = new DataView(chunk.data);
+        if (tmp.getUint32(0) == 1) {
+          //  h264 start code '0001'
+          console.log("h264 =======");
+        }
+        const newData = new ArrayBuffer(chunk.data.byteLength + 4);
+        const newView = new DataView(newData);
+
+        let metadata = new ArrayBuffer(4);
+        let metaView = new DataView(metadata);
+        metaView.setUint32(0, frames++);
+
+        const data = new Uint8Array(newData);
+        data.set(new Uint8Array(chunk.data));
+        data.set(new Uint8Array(metadata), chunk.data.byteLength);
+        chunk.data = newData;
+
+        controller.enqueue(chunk);
+        console.log("Send frame index ===", frames);
+      }
+    </script>
+  </body>
+</html>

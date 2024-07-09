@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <title>RTCRtpReceiver</title>
+  </head>
+  <body>
+   <video id="localVideo" autoplay muted></video>
+   <script>
+      var pc = new RTCPeerConnection({
+        encodedInsertableStreams: true,
+      });
+      var localVideo = document.getElementById("localVideo");
+
+      start();
+
+      async function start() {
+        const transceiver = await pc.addTransceiver("video", {
+          direction: "recvonly",
+        });
+        setupReceiverTransform(transceiver.receiver);
+
+        // 创建一个用于处理接收到的媒体流的回调函数
+        transceiver.receiver.ontrack = (event) => {
+          const remoteVideo = document.createElement("video");
+          remoteVideo.srcObject = event.streams[0];
+          localVideo.parentNode.appendChild(remoteVideo);
+        };
+      }
+
+      function setupReceiverTransform(receiver) {
+        console.log("receiver kind=%s", receiver.track.kind);
+        const receiverStreams = receiver.createEncodedStreams();
+        // const readableStream = receiverStreams.readableStream;
+        // const writableStream = receiverStreams.writableStream;
+        const readableStream = receiverStreams.readable;
+        const writableStream = receiverStreams.writable;
+        const transformStream = new TransformStream({
+          transform: decodeFunction,
+        });
+        readableStream.pipeThrough(transformStream).pipeTo(writableStream);
+      }
+
+      function decodeFunction(chunk, controller) {
+        const view = new DataView(chunk.data);
+        // last 4 bytes
+        const count = view.getUint32(chunk.data.byteLength - 4);
+        chunk.data = chunk.data.slice(0, chunk.data.byteLength - 4);
+        controller.enqueue(chunk);
+
+        console.log("Receive frame index ===", count);
+      }
+    </script>
+  </body>
+</html>
