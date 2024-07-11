@@ -37,6 +37,11 @@ let pendingFrames = [];
 let underflow = true;
 let baseTime = 0;
 
+/**
+ * pendingFrames.push(frame)
+ * underflow   判断pendingFrames是否有值
+ * requestAnimationFrame
+ */
 function handleFrame(frame) {
   pendingFrames.push(frame);
   if (underflow) setTimeout(renderFrame, 0);
