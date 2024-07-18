@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webrtc视频流下载</title>
+</head>
+<body>
+    <script>
+        // 通过将视频数据按顺序合并为一个Blob对象并保存为webm格式的视频文件,确保了视频数据的完整性和顺序性。
+        // 这样的文件结构符合视频文件的基本要求,使得能够被大多数支持webm格式的播放器正确解析和播放。
+        //   完整性和顺序性
+        // 1. 通过 WebRTCInsertableStreamsDemo 截取 webrtc视频流
+        // 2. 按次序 保存 1 中截取的视频流到数组中
+        // 3. 使用 handleDownloadWebRtcChunks 下载
+        // 4. 调整下载视频的 格式为 .h264 并使用 VLC media player 进行播放
+        function handleDownloadWebRtcChunks() {
+        // 初始化一个空的数组用于存储视频数据
+        var videoDataArray = [];
+
+        // 遍历window.webrtcChunks中的数据
+        for (let i = 0; i < window.webrtcChunks.length; i++) {
+          if (window.webrtcChunks[i] instanceof RTCEncodedVideoFrame) {
+            videoDataArray.push(window.webrtcChunks[i].data);
+          }
+        }
+         console.log('videoDataArray:',videoDataArray)
+        // 创建一个Blob对象，保持顺序
+        var mergedData = new Blob(videoDataArray, { type: "video/webm" });
+
+        // 创建下载链接
+        var url = URL.createObjectURL(mergedData);
+
+        // 创建一个<a>标签
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "video.webm";
+        a.style.display = "none";
+        document.body.appendChild(a);
+
+        // 触发点击事件自动下载
+        a.click();
+
+        // 释放URL对象
+        URL.revokeObjectURL(url);
+      }
+    </script>
+</body>
+</html>
