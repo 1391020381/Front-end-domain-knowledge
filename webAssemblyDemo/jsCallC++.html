@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly-Demo</title>
+</head>
+<body>
+  <script>
+    var Module = {
+        onRuntimeInitialized:function(){
+            console.log("Hello" + Module.getStr(12,13.3))
+        }
+    }
+    // 这是一个特殊的对象(必须叫这个名字) 
+    // 当main.js为我们加载完 main.wasm模块之后,会调用这个对象的 onRuntimeInitialized方法。
+    // 在这个方法内我们调用了 Module.getStr方法
+    // Module.getStr方法就是我们在C++代码中公开的getStr方法
+
+    // Module 是开发者定义的一个全局对象, emscript生成的代码(main.js)会在 WebAssembly 执行过程的各个阶段调用这个对象的公共方法(onRuntimeInitialized方法就是被main.js调用的)
+    // 开发者可以为Module对象提供指定的方法来控制WebAssembly代码的执行。
+  </script>
+  <script src="main.js"></script>  
+</body>
+</html>
