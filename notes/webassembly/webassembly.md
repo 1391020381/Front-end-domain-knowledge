@@ -62,3 +62,7 @@
     * 在JavaScript中，可以直接调用C++中定义的绑定类的构造函数、成员函数，或者调用绑定的全局函数。
 3. 处理数据类型转换：
     * 由于C++和JavaScript有不同的数据类型系统，可能需要进行数据类型转换，例如将JavaScript的字符串转换为C++的std::string，或将JavaScript的对象转换为C++对象。      
+
+
+# 使用 C++ 编写 WebAssembly 错误捕获 处理
+  
