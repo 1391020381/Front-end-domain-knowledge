@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>视频与canvas</title>
+  </head>
+  <body>
+    <video
+      id="my-video"
+      controls="true"
+      width="480"
+      height="270"
+      crossorigin="anonymous"
+    >
+      <source
+        src="https://jplayer.org/video/webm/Big_Buck_Bunny_Trailer.webm"
+        type="video/webm"
+      />
+      <source
+        src="https://jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v"
+        type="video/mp4"
+      />
+    </video>
+
+    <canvas id="my-canvas" width="480" height="270"></canvas>
+    <script>
+     // 1. 从 video 元素中读取一帧写到 canvas元素中
+     // 2. 读取 canvas 元素中的数据并处理
+    //  3. 将处理完成的数据写入 显示的 canvas
+    //  4. 暂停斌重复    
+      const processor = {
+        timerCallback() {
+          if (this.video.paused || this.video.ended) {
+            return;
+          }
+          this.computeFrame();
+          setTimeout(() => {
+            this.timerCallback();
+          }, 16); // roughly 60 frames per second
+        },
+
+        doLoad() {
+          this.video = document.getElementById("my-video");
+          this.c1 = document.getElementById("my-canvas");
+          this.ctx1 = this.c1.getContext("2d");
+
+          this.video.addEventListener(
+            "play",
+            () => {
+              this.width = this.video.width;
+              this.height = this.video.height;
+              this.timerCallback();
+            },
+            false
+          );
+        },
+
+        computeFrame() {
+          this.ctx1.drawImage(this.video, 0, 0, this.width, this.height);
+          const frame = this.ctx1.getImageData(0, 0, this.width, this.height);
+          const l = frame.data.length / 4;
+
+          for (let i = 0; i < l; i++) {
+            const grey =
+              (frame.data[i * 4 + 0] +
+                frame.data[i * 4 + 1] +
+                frame.data[i * 4 + 2]) /
+              3;
+
+            frame.data[i * 4 + 0] = grey;
+            frame.data[i * 4 + 1] = grey;
+            frame.data[i * 4 + 2] = grey;
+          }
+          this.ctx1.putImageData(frame, 0, 0);
+
+          return;
+        },
+      };
+
+      processor.doLoad()
+    </script>
+  </body>
+</html>
