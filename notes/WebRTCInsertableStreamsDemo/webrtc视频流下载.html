@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>webrtc视频流下载</title>
-</head>
-<body>
+  </head>
+  <body>
     <script>
-        // 通过将视频数据按顺序合并为一个Blob对象并保存为webm格式的视频文件,确保了视频数据的完整性和顺序性。
-        // 这样的文件结构符合视频文件的基本要求,使得能够被大多数支持webm格式的播放器正确解析和播放。
-        //   完整性和顺序性
-        // 1. 通过 WebRTCInsertableStreamsDemo 截取 webrtc视频流
-        // 2. 按次序 保存 1 中截取的视频流到数组中
-        // 3. 使用 handleDownloadWebRtcChunks 下载
-        // 4. 调整下载视频的 格式为 .h264 并使用 VLC media player 进行播放
-        function handleDownloadWebRtcChunks() {
+      // 通过将视频数据按顺序合并为一个Blob对象并保存为webm格式的视频文件,确保了视频数据的完整性和顺序性。
+      // 这样的文件结构符合视频文件的基本要求,使得能够被大多数支持webm格式的播放器正确解析和播放。
+      //   完整性和顺序性
+      // 1. 通过 WebRTCInsertableStreamsDemo 截取 webrtc视频流
+      // 2. 按次序 保存 1 中截取的视频流到数组中
+      // 3. 使用 handleDownloadWebRtcChunks 下载
+      // 4. 调整下载视频的 格式为 .h264 并使用 VLC media player 进行播放
+      function handleDownloadWebRtcChunks() {
         // 初始化一个空的数组用于存储视频数据
         var videoDataArray = [];
 
@@ -24,7 +24,7 @@
             videoDataArray.push(window.webrtcChunks[i].data);
           }
         }
-         console.log('videoDataArray:',videoDataArray)
+        console.log("videoDataArray:", videoDataArray);
         // 创建一个Blob对象，保持顺序
         var mergedData = new Blob(videoDataArray, { type: "video/webm" });
 
@@ -44,6 +44,29 @@
         // 释放URL对象
         URL.revokeObjectURL(url);
       }
+
+      function saveArrayBuffersToFile() {
+        const arrayBuffers = window.webrtcChunks.map((frame) => frame.data);
+        arrayBuffers.forEach((arrayBuffer, index) => {
+          const uint8Array = new Uint8Array(arrayBuffer);
+          const fileName = `video_frame_${index}.bin`;
+          const fileBlob = new Blob([uint8Array], {
+            type: "application/octet-stream",
+          });
+
+          const downloadLink = document.createElement("a");
+          downloadLink.href = URL.createObjectURL(fileBlob);
+          downloadLink.download = fileName;
+          downloadLink.click();
+          URL.revokeObjectURL(downloadLink.href);
+        });
+      }
+      function handleIsAddWebrtcChunk(){
+         window.isAddWebrtcChunk = true;
+         setTimeout(()=>{
+            window.isAddWebrtcChunk = false
+         },60000)
+      }
     </script>
-</body>
+  </body>
 </html>
