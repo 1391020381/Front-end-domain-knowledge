@@ -61,11 +61,36 @@
           URL.revokeObjectURL(downloadLink.href);
         });
       }
-      function handleIsAddWebrtcChunk(){
-         window.isAddWebrtcChunk = true;
-         setTimeout(()=>{
-            window.isAddWebrtcChunk = false
-         },60000)
+      function handleIsAddWebrtcChunk() {
+        window.isAddWebrtcChunk = true;
+        setTimeout(() => {
+          window.isAddWebrtcChunk = false;
+        }, 60000);
+      }
+
+      function handleGetRepeatTimestamp() {
+        // 假设 window.noRepeatWebrtcChunks 是一个数组，里面保存了多个对象
+        const chunks = window.noRepeatWebrtcChunks;
+
+        // 创建一个 Map 来存储每个 timestamp 出现的次数
+        const timestampCounts = new Map();
+
+        // 遍历 chunks 数组，统计每个 timestamp 出现的次数
+        chunks.forEach((chunk) => {
+          const { timestamp } = chunk;
+          if (timestampCounts.has(timestamp)) {
+            timestampCounts.set(timestamp, timestampCounts.get(timestamp) + 1);
+          } else {
+            timestampCounts.set(timestamp, 1);
+          }
+        });
+
+        // 筛选出出现次数大于 1 的 timestamp
+        const duplicateTimestamps = Array.from(timestampCounts.entries())
+          .filter(([timestamp, count]) => count > 1)
+          .map(([timestamp, _]) => timestamp);
+
+        console.log("有重复的 timestamp:", duplicateTimestamps);
       }
     </script>
   </body>
